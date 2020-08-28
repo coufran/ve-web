@@ -7,7 +7,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.prototype.axios = Axios.create({
     baseURL: 'http://192.168.168.61:8080/web',
-    timeout: 1000
+    timeout: 10000
 });
 Vue.prototype.axios.interceptors.request.use(function (config) {
     config.headers = {
@@ -20,6 +20,15 @@ Vue.prototype.axios.interceptors.request.use(function (config) {
 Vue.prototype.axios.interceptors.response.use(function(response) {
     return response.data;
 }, function(error) {
+    if(error.response) {
+        console.error(error.response);
+        alert("系统错误，请联系管理员");
+    } else if(error.request) {
+        console.error(error.request);
+        alert("请检查您的网络");
+    } else {
+        alert("未知异常，请联系管理员");
+    }
     return Promise.reject(error);
 })
 
