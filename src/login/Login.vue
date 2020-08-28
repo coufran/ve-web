@@ -55,7 +55,7 @@
 
 <style>
     body{
-        background-color: rgb(242,242,2420);
+        background-color: rgb(242,242,242);
     }
 </style>
 
@@ -64,7 +64,7 @@
         margin: 0 auto;
         padding-top: 50px;
         width: 100%;
-        max-width: 1000px;
+        max-width: 500px;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
