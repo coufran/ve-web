@@ -1,10 +1,12 @@
 <template>
   <div id="app">
+    <!-- 面板 -->
     <div id="content">
       <RecordPanel v-if="activePanel == 'record'"></RecordPanel>
       <AccountPanel v-if="activePanel == 'account'"></AccountPanel>
       <MinePanel v-if="activePanel == 'mine'"></MinePanel>
-    </div>
+    </div><!-- 面板 -->
+    <!-- 选项卡（导航） -->
     <footer class="nav">
       <div class="nav-item" :class="{active : activePanel == 'record'}" @click="changePanel('record')">
         <span><b-icon icon="pen"></b-icon></span>
@@ -18,7 +20,7 @@
         <span><b-icon icon="person"></b-icon></span>
         <span>我的</span>
       </div>
-    </footer>
+    </footer><!-- 选项卡（导航） -->
   </div>
 </template>
 
@@ -36,9 +38,10 @@ export default {
     },
     data: function() {
         return {
-            activePanel: "record" // record（记账），account（账户），mine（我的）
+            activePanel: "record" // 活跃面板，record（记账），account（账户），mine（我的）
         };
     },
+    // 校验是否登录，未登录或登录已过期重定向到登录页
     created: function() {
         this.axios
             .get("/auth/isLogin")
@@ -54,6 +57,10 @@ export default {
             });
     },
     methods: {
+        /**
+         * 切换面板
+         * @param panel 面板名称
+         */
         changePanel: function(panel) {
             this.activePanel = panel;
         }

@@ -1,4 +1,5 @@
 module.exports = {
+    // 多页面配置
     pages: {
         index: {
             entry: 'src/index/main.js',
@@ -13,6 +14,7 @@ module.exports = {
             title: '登录 - 微鱼'
         }
     },
+    // 开发环境配置
     devServer: {
         port: 3000
     }

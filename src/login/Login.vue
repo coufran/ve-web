@@ -13,9 +13,9 @@
         name: "Login",
         data: function() {
             return {
-                username: null,
-                password: null,
-                msg: null
+                username: null, // 用户名
+                password: null, // 密码
+                msg: null // 提醒消息
             };
         },
         methods: {
@@ -40,10 +40,12 @@
                         password: this.password
                     })
                     .then(response => {
+                        // 登录失败，显示错误消息
                         if(!response.success) {
                             this.msg = response.msg;
                             return;
                         }
+                        // 登陆成功，保存Token，重定向到首页
                         let token = response.data;
                         window.sessionStorage.setItem("token", token);
                         window.location.href = "index.html";
