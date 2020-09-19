@@ -73,7 +73,7 @@ export default {
     margin: 0 auto;
     width: 100%;
     max-width: 500px;
-    min-height: 100vh;
+    height: 100vh;
     background-color: rgb(242,242,242);
     display: flex;
     flex-direction: column;
@@ -81,6 +81,13 @@ export default {
 
   #content {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 0;
+  }
+  #content>* {
+    flex-grow: 1;
+    height: 0;
   }
 
   .nav {
@@ -89,7 +96,7 @@ export default {
     border-top: 1px solid #eee;
   }
   .nav-item {
-    padding: 5px 6px 0 0;
+    padding: 4px 0 6px 0;
     font-size: 12px;
     flex-grow: 1;
     text-align: center;
