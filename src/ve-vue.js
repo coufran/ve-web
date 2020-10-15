@@ -7,7 +7,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // 定义axios组件
 Vue.prototype.axios = Axios.create({
-    baseURL: 'http://192.168.2.156:8080/web',
+    // baseURL: 'http://127.0.0.1:8080/web',
+    baseURL: 'http://192.168.2.198:8080/web',
     timeout: 10000
 });
 // 添加鉴权请求头

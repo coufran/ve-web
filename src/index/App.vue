@@ -94,6 +94,7 @@ export default {
     height: 60px;
     display: flex;
     border-top: 1px solid #eee;
+    background-color: white;
   }
   .nav-item {
     padding: 4px 0 6px 0;

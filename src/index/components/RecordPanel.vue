@@ -86,7 +86,6 @@
     }
 
     .slider {
-        /*background-color: lightblue;*/
         overflow-y: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
