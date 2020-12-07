@@ -2,12 +2,14 @@ import Vue from 'vue'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import Axios from 'axios'
 
+import config from './config'
+
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // 定义axios组件
 Vue.prototype.axios = Axios.create({
-    baseURL: 'http://192.168.2.156:8080/web',
+    baseURL: config.server.url + "/web",
     timeout: 10000
 });
 // 添加鉴权请求头
