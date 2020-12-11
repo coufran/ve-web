@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import Axios from 'axios'
+import numeral from 'numeral'
+import moment from 'moment'
 
+import dataStore from './data-store'
 import config from './config'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -36,6 +39,11 @@ Vue.prototype.axios.interceptors.response.use(function(response) {
     }
     return Promise.reject(error);
 })
+
+// 添加各种工具
+Vue.prototype.dataStore = dataStore;
+Vue.prototype.numeral = numeral;
+Vue.prototype.moment = moment;
 
 // Vue配置
 Vue.config.productionTip = false

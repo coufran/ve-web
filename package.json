@@ -12,6 +12,8 @@
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
     "core-js": "^3.6.5",
+    "moment": "^2.29.1",
+    "numeral": "^2.0.6",
     "vue": "^2.6.12"
   },
   "devDependencies": {

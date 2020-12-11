@@ -6,15 +6,15 @@
             <!-- 丁字面板滚动 -->
             <div class="slider-body">
                 <div class="panel-record-t-title">
-                    <div class="panel-record-t-left">15日</div>
+                    <div class="panel-record-t-left">{{moment().format("D日")}}</div>
                     <div class="panel-record-t-middle"><span></span></div>
                     <div class="panel-record-t-right">0.00</div>
                 </div>
                 <!-- 收支记录 -->
                 <div v-for="(record, index) in records" :key="index" class="panel-record-t-item">
                     <div class="panel-record-t-left">
-                        <div>工资 1000.00</div>
-                        <div class="panel-record-t-remark">10月工资</div>
+                        <div>工资 {{ numeral(record.amount).format("0.00") }}</div>
+                        <div class="panel-record-t-remark">10月工资{{dataStore.repositories.test.test-key}}</div>
                     </div>
                     <div class="panel-record-t-middle"><b-icon icon="credit-card"></b-icon></div>
                     <div class="panel-record-t-right">
@@ -36,16 +36,28 @@
         components: {
             Panel
         },
+        created: function() {
+            this.axios
+                .get("/record/list", {
+                    params: {
+                        startTime: this.moment().format("YYYY/MM/DD")
+                    }
+                })
+                .then(result => {
+                    if(!result.success) {
+                        alert(result.msg)
+                        return;
+                    }
+                    let records = result.data;
+                    this.records = records;
+                })
+        },
+        computed: function() {
+
+        },
         data: function() {
             return {
-                records: [
-                    {
-
-                    },
-                    {
-
-                    }
-                ]
+                records: []
             };
         }
     }
