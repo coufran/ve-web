@@ -2,26 +2,30 @@
     <Panel id="panel-record">
         <b-button variant="outline-danger" id="panel-record-add">记一笔</b-button>
         <!-- 丁字面板 -->
-        <div id="panel-record-t" class="slider">
+        <div id="panel-record-t" ref="panelRecordT" class="slider">
             <!-- 丁字面板滚动 -->
             <div class="slider-body">
-                <div class="panel-record-t-title">
-                    <div class="panel-record-t-left">{{moment().format("D日")}}</div>
-                    <div class="panel-record-t-middle"><span></span></div>
-                    <div class="panel-record-t-right">0.00</div>
-                </div>
-                <!-- 收支记录 -->
-                <div v-for="(record, index) in records" :key="index" class="panel-record-t-item">
-                    <div class="panel-record-t-left">
-                        <div>工资 {{ numeral(record.amount).format("0.00") }}</div>
-                        <div class="panel-record-t-remark">10月工资{{dataStore.repositories.test.test-key}}</div>
+                <template v-for="recordsByDayItem in recordsByDay">
+                    <div class="panel-record-t-title" :key="recordsByDayItem.date.format()">
+                        <div class="panel-record-t-left">{{recordsByDayItem.date.format("D日")}}</div>
+                        <div class="panel-record-t-middle"><span></span></div>
+                        <div class="panel-record-t-right">{{numeral(recordsByDayItem.sum/100).format("0.00")}}</div>
                     </div>
-                    <div class="panel-record-t-middle"><b-icon icon="credit-card"></b-icon></div>
-                    <div class="panel-record-t-right">
-                        <div>房租 100.00</div>
-                        <div class="panel-record-t-remark">10月房租</div>
-                    </div>
-                </div><!-- 收支记录 -->
+                    <!-- 收支记录 -->
+                    <template v-for="record in recordsByDayItem.records">
+                        <div v-if="record.expend || record.income" :key="record.id" class="panel-record-t-item">
+                            <div class="panel-record-t-left">
+                                <div v-if="record.expend">{{ record.debit.name }} {{ numeral(record.amount/100).format("0.00") }}</div>
+                                <div v-if="record.expend" class="panel-record-t-remark">{{ record.remark }}</div>
+                            </div>
+                            <div class="panel-record-t-middle"><b-icon icon="credit-card"></b-icon></div>
+                            <div class="panel-record-t-right">
+                                <div v-if="record.income">{{ record.credit.name }} {{ numeral(record.amount/100).format("0.00") }}</div>
+                                <div v-if="record.income" class="panel-record-t-remark">{{ record.remark }}</div>
+                            </div>
+                        </div>
+                    </template><!-- 收支记录 -->
+                </template>
             </div><!-- 丁字面板滚动 -->
         </div><!-- 丁字面板 -->
         <div id="panel-record-bg"></div>
@@ -36,29 +40,75 @@
         components: {
             Panel
         },
-        created: function() {
-            this.axios
-                .get("/record/list", {
-                    params: {
-                        startTime: this.moment().format("YYYY/MM/DD")
-                    }
-                })
-                .then(result => {
-                    if(!result.success) {
-                        alert(result.msg)
-                        return;
-                    }
-                    let records = result.data;
-                    this.records = records;
-                })
-        },
-        computed: function() {
-
+        // created: function() {
+        //     this.load();
+        // },
+        mounted: function() {
+            this.loadIfNeed();
+            this.$refs.panelRecordT.addEventListener("scroll", () => {
+              this.loadIfNeed();
+            });
         },
         data: function() {
             return {
-                records: []
+                recordsByDay: [],
+                lastLoadDate: null
             };
+        },
+        methods: {
+            loadIfNeed: function() {
+                let scrollTop = this.$refs.panelRecordT.scrollTop; // 顶部距离
+                let scrollHeight = this.$refs.panelRecordT.scrollHeight; // 内容高度
+                let clientHeight = this.$refs.panelRecordT.clientHeight; // 高度
+                console.info(scrollTop);
+                console.info(scrollHeight);
+                console.info(clientHeight);
+                if(scrollHeight <= clientHeight + scrollTop) {
+                    // this.load(this.loadIfNeed);
+                }
+            },
+            load: function(successCallback) {
+                let date;
+                if(this.lastLoadDate == null) {
+                    date = this.moment();
+                } else {
+                    date = this.lastLoadDate.subtract(1, "days");
+                }
+                this.axios
+                    .get("/record/list", {
+                        params: {
+                            startTime: date.format("YYYY/MM/DD"),
+                            endTime: date.format("YYYY/MM/DD")
+                        }
+                    })
+                    .then(result => {
+                        if(!result.success) {
+                            alert(result.msg)
+                            return;
+                        }
+                        this.recordsByDay.push({
+                            date: date,
+                            records: result.data,
+                            sum: this.sumAmount(result.data)
+                        });
+                        this.lastLoadDate = date;
+                        if(successCallback) {
+                            successCallback();
+                        }
+                    });
+            },
+            sumAmount: function(records) {
+                let sum = 0;
+                for(let i=0; i<records.length; i++) {
+                    let record = records[i];
+                    if(record.income) {
+                        sum += record.amount;
+                    } else if(record.expend) {
+                        sum -= record.amount;
+                    }
+                }
+                return sum;
+            }
         }
     }
 </script>
