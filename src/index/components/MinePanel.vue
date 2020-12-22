@@ -5,10 +5,10 @@
         </header>
         <div id="mine-info">
             <span id="mine-logo"><img src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2866953378,474015488&fm=11&gp=0.jpg"/></span>
-            <span id="mine-name">Coufran</span>
+            <span id="mine-name">{{ user.username }}</span>
         </div>
         <ul id="mine-list">
-            <li><b-icon icon="power"></b-icon><span>退出登录</span></li>
+            <li @click="logout"><b-icon icon="power"></b-icon><span>退出登录</span></li>
         </ul>
     </Panel>
 </template>
@@ -20,6 +20,37 @@
         name: "MinePanel",
         components: {
             Panel
+        },
+        data: function() {
+            return {
+                user: {
+                    username: "loading...."
+                }
+            }
+        },
+        created: function() {
+            this.axios
+                .get("/user/get")
+                .then(result => {
+                    if(!result.success) {
+                        alert(result.msg);
+                        return;
+                    }
+                    this.user = result.data;
+                });
+        },
+        methods: {
+            logout: function() {
+                this.axios
+                    .post("/auth/logout")
+                    .then(result => {
+                        if(!result.success) {
+                            alert(result.msg);
+                            return;
+                        }
+                        window.location.href = "login.html";
+                    })
+            }
         }
     }
 </script>
