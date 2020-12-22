@@ -29,16 +29,19 @@
             </div><!-- 丁字面板滚动 -->
         </div><!-- 丁字面板 -->
         <div id="panel-record-bg"></div>
+        <Popup></Popup>
     </Panel>
 </template>
 
 <script>
     import Panel from './Panel.vue'
+    import Popup from './Popup.vue'
 
     export default {
         name: "RecordPanel",
         components: {
-            Panel
+            Panel,
+            Popup
         },
         // created: function() {
         //     this.load();
