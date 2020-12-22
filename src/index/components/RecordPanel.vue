@@ -87,7 +87,7 @@
                     })
                     .then(result => {
                         if(!result.success) {
-                            alert(result.msg)
+                            alert(result.msg);
                             return;
                         }
                         if(result.data.length > 0) {

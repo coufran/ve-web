@@ -11,26 +11,28 @@
                 <!-- 资产汇总 -->
                 <header class="account-summary">
                     <div class="account-summary-main">
-                        <span>3453613.22</span>
+                        <span>{{ numeral((assetsAmount-liabilityAmount)/100).format("0.00") }}</span>
                         <span class="account-summary-font-small">净资产</span>
                     </div>
                     <div class="account-summary-assist">
-                        <div><span class="account-summary-font-small">负债</span> <span>92117.69</span></div>
-                        <div><span class="account-summary-font-small">资产</span> <span>192117.69</span></div>
+                        <div><span class="account-summary-font-small">负债</span> <span>{{ numeral(liabilityAmount/100).format("0.00") }}</span></div>
+                        <div><span class="account-summary-font-small">资产</span> <span>{{ numeral(assetsAmount/100).format("0.00") }}</span></div>
                     </div>
                 </header><!-- 资产汇总 -->
                 <!-- 账户分类 -->
                 <div class="account-container">
-                    <article  v-for="j in 6" :key="j" class="account-title">
-                        <header class="account-title-header">
-                            <div>现金</div>
-                        </header>
-                        <!-- 账户 -->
-                        <section v-for="i in j" :key="i" class="account-account">
-                            <div>钱包</div>
-                            <div>150.00</div>
-                        </section><!-- 账户 -->
-                    </article>
+                    <template v-for="(accountByTitleItem, index) in accountByTitle">
+                        <article v-if="isReal(accountByTitleItem.title)" :key="index" class="account-title">
+                            <header class="account-title-header">
+                                <div>{{ accountByTitleItem.title.name }}</div>
+                            </header>
+                            <!-- 账户 -->
+                            <section v-for="account in accountByTitleItem.accounts" :key="account.id" class="account-account">
+                                <div>{{ account.name }}</div>
+                                <div>{{ numeral(account.amount/100).format("0.00") }}</div>
+                            </section><!-- 账户 -->
+                        </article>
+                    </template>
                 </div><!-- 账户分类 -->
             </div>
         </div>
@@ -44,6 +46,65 @@
         name: "AccountPanel",
         components: {
             Panel
+        },
+        data: function() {
+            return {
+                accounts: [],
+            };
+        },
+        computed: {
+            accountByTitle: function() {
+                let accountByTitleMap = new Map();
+                for(let i=0; i<this.accounts.length; i++) {
+                    let account = this.accounts[i];
+                    let accountByTitleItem = accountByTitleMap.get(account.title.id);
+                    if(accountByTitleItem == null) {
+                        accountByTitleItem = {
+                            title: account.title,
+                            accounts: []
+                        };
+                    }
+                    accountByTitleItem.accounts.push(account);
+                    accountByTitleMap.set(account.title.id, accountByTitleItem);
+                }
+                let accountByTitle = [];
+                accountByTitleMap.forEach(value => {
+                    accountByTitle.push(value);
+                });
+                return accountByTitle;
+            },
+            assetsAmount: function() {
+                return this.sumAmount("ASSETS");
+            },
+            liabilityAmount: function() {
+                return this.sumAmount("LIABILITY");
+            }
+        },
+        created: function() {
+            this.axios
+                .get("/account/list")
+                .then(result => {
+                    if(!result.success) {
+                        alert(result.msg);
+                        return;
+                    }
+                    this.accounts = result.data;
+                });
+        },
+        methods: {
+            isReal: function(title) {
+                return title.kind == "ASSETS" || title.kind == "LIABILITY";
+            },
+            sumAmount: function(kind) {
+                let sumAmount = 0;
+                for(let i=0; i<this.accounts.length; i++) {
+                    let account = this.accounts[i];
+                    if(account.title.kind == kind) {
+                        sumAmount += account.amount;
+                    }
+                }
+                return sumAmount;
+            }
         }
     }
 </script>
