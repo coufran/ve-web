@@ -1,12 +1,15 @@
 <template>
-    <div class="popup">
-        Popup
+    <div class="popup" :class="active?'active':''">
+        <slot></slot>
     </div>
 </template>
 
 <script>
 export default {
-    name: "Popup"
+    name: "Popup",
+    props: {
+        active: Boolean
+    }
 }
 </script>
 
@@ -15,9 +18,12 @@ export default {
         position: fixed;
         bottom: 0;
         width: 500px;
-        height: 100vh;
-        background-color: white;
+        height: 0;
         transition: height .5s;
+    }
+
+    .popup.active {
+        height: 100vh;
     }
 
 </style>
