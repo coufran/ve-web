@@ -46,13 +46,16 @@
         mounted: function() {
             this.loadIfNeed();
             this.$refs.panelRecordT.addEventListener("scroll", () => {
-              this.loadIfNeed();
+                this.emptyDayCount = 0;
+                this.loadIfNeed();
             });
         },
         data: function() {
             return {
                 recordsByDay: [],
-                lastLoadDate: null
+                lastLoadDate: null,
+                isLoading: false,
+                emptyDayCount: 0
             };
         },
         methods: {
@@ -60,19 +63,20 @@
                 let scrollTop = this.$refs.panelRecordT.scrollTop; // 顶部距离
                 let scrollHeight = this.$refs.panelRecordT.scrollHeight; // 内容高度
                 let clientHeight = this.$refs.panelRecordT.clientHeight; // 高度
-                console.info(scrollTop);
-                console.info(scrollHeight);
-                console.info(clientHeight);
-                if(scrollHeight <= clientHeight + scrollTop) {
-                    // this.load(this.loadIfNeed);
+                if(scrollHeight <= clientHeight + scrollTop + 100) {
+                    this.load(this.loadIfNeed);
                 }
             },
             load: function(successCallback) {
+                if(this.isLoading) {
+                    return;
+                }
+                this.isLoading = true;
                 let date;
                 if(this.lastLoadDate == null) {
                     date = this.moment();
                 } else {
-                    date = this.lastLoadDate.subtract(1, "days");
+                    date = this.moment(this.lastLoadDate).subtract(1, "days");
                 }
                 this.axios
                     .get("/record/list", {
@@ -86,13 +90,19 @@
                             alert(result.msg)
                             return;
                         }
-                        this.recordsByDay.push({
-                            date: date,
-                            records: result.data,
-                            sum: this.sumAmount(result.data)
-                        });
+                        if(result.data.length > 0) {
+                            this.recordsByDay.push({
+                                date: date,
+                                records: result.data,
+                                sum: this.sumAmount(result.data)
+                            });
+                            this.emptyDayCount = 0;
+                        } else {
+                            this.emptyDayCount++;
+                        }
                         this.lastLoadDate = date;
-                        if(successCallback) {
+                        this.isLoading = false;
+                        if(successCallback && this.emptyDayCount <= 30) {
                             successCallback();
                         }
                     });
