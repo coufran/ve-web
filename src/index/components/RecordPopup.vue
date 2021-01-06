@@ -15,16 +15,41 @@
                 <input v-model="amount" type="text" placeholder="0.00" />
             </div>
             <div class="popup-record-title">
+                <div class="active">
+                    <div><b-icon icon="cash"></b-icon></div>
+                    <div>工资</div>
+                </div>
                 <div>
                     <div><b-icon icon="cash"></b-icon></div>
                     <div>工资</div>
                 </div>
-                <div>工资</div>
-                <div>工资</div>
-                <div>工资</div>
-                <div>工资</div>
-                <div>工资</div>
+                <div>
+                    <div><b-icon icon="cash"></b-icon></div>
+                    <div>工资</div>
+                </div>
+                <div>
+                    <div><b-icon icon="cash"></b-icon></div>
+                    <div>工资</div>
+                </div>
+                <div>
+                    <div><b-icon icon="cash"></b-icon></div>
+                    <div>工资</div>
+                </div>
+                <div>
+                    <div><b-icon icon="cash"></b-icon></div>
+                    <div>工资</div>
+                </div>
             </div>
+            <Popup class="popup-record-popup" :active="true && active" :height="'auto'">
+                <div class="popup-record-popup-line1">
+                    <div class="popup-record-time"><b-icon icon="calendar3"></b-icon> 01.06</div>
+                    <div class="popup-record-remark">
+                        <b-icon icon="pencil-square"></b-icon>
+                        <input type="text" placeholder="写点啥备注下"/>
+                        <b-button>OK</b-button>
+                    </div>
+                </div>
+            </Popup>
         </div>
     </Popup>
 </template>
@@ -115,18 +140,60 @@
 .popup-record-title>* {
     width: 20%;
     height: 100px;
-    border: 1px solid gray;
     text-align: center;
     cursor: pointer;
 }
 .popup-record-title>*>*:first-child {
-    margin: 8px auto;
+    margin: 10px auto;
     width: 50px;
     height: 50px;
-    line-height: 50px;
-    font-size: 25px;
+    box-sizing: border-box;
+    line-height: 48px;
+    font-size: 30px;
+    font-family: -apple-system;
     border-radius: 25px;
-    border: 1px solid #e1861b;
     color: #e1861b;
+    border: 1px solid transparent;
+}
+.popup-record-title>*.active>*:first-child, .popup-record-title>*:hover>*:first-child {
+    border: 1px solid #e1861b;
+}
+
+.popup-record-popup-line1 {
+    display: flex;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+}
+.popup-record-popup-line1>*:nth-child(n+2) {
+    margin-left: 10px;
+}
+.popup-record-popup-line1>*:nth-child(n+2)::before {
+    content: '|';
+    display: block;
+    margin-right: 10px;
+}
+.popup-record-time {
+
+}
+.popup-record-remark {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    flex-grow: 1;
+}
+.popup-record-remark>input {
+    height: 100%;
+    flex-grow: 1;
+    padding: 0 10px;
+    border-style: none;
+}
+.popup-record-remark>button {
+    height: 24px;
+    line-height: 24px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 </style>
