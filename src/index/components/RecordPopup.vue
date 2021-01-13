@@ -1,47 +1,30 @@
 <template>
     <Popup class="popup" :active="active">
         <header class="popup-header">
-            <div><b-icon-chevron-left></b-icon-chevron-left></div>
+            <div><b-icon-chevron-left @click="hide"></b-icon-chevron-left></div>
             <div>日常账本</div>
         </header>
         <div class="popup-content">
             <!-- tab选择 -->
             <div class="popup-record-tab">
-                <b-button class="active" variant="link">支出</b-button>
-                <b-button variant="link">收入</b-button>
-                <b-button variant="link">转账</b-button>
+                <b-button @click="tab('LOSS')" :class="{'active':activeTabName=='LOSS'}" variant="link">支出</b-button>
+                <b-button @click="tab('PROFIT')" :class="{'active':activeTabName=='PROFIT'}" variant="link">收入</b-button>
+                <b-button @click="tab('TRANSFER')" :class="{'active':activeTabName=='TRANSFER'}" variant="link">转账</b-button>
             </div><!-- tab选择 -->
             <!-- 金额输入 -->
             <div class="popup-record-amount">
-                <div>工资</div>
+                <div>{{ activeAccount?activeAccount.name:'' }}</div>
                 <input v-model="amount" type="text" placeholder="0.00" />
             </div><!-- 金额输入 -->
             <!-- 科目选择 -->
             <div class="popup-record-title">
-                <div class="active">
-                    <div><b-icon icon="cash"></b-icon></div>
-                    <div>工资</div>
-                </div>
-                <div>
-                    <div><b-icon icon="cash"></b-icon></div>
-                    <div>工资</div>
-                </div>
-                <div>
-                    <div><b-icon icon="cash"></b-icon></div>
-                    <div>工资</div>
-                </div>
-                <div>
-                    <div><b-icon icon="cash"></b-icon></div>
-                    <div>工资</div>
-                </div>
-                <div>
-                    <div><b-icon icon="cash"></b-icon></div>
-                    <div>工资</div>
-                </div>
-                <div>
-                    <div><b-icon icon="cash"></b-icon></div>
-                    <div>工资</div>
-                </div>
+                <template v-for="account in accounts">
+                    <div v-if="account.title.kind==activeTabName" @click="changeAccount(account)"
+                         :key="account.id" :class="{'active':account==activeAccount}">
+                        <div>{{ account.name[0] }}</div>
+                        <div>{{ account.name }}</div>
+                    </div>
+                </template>
             </div><!-- 科目选择 -->
             <!-- 底部弹出框 -->
             <Popup class="popup-record-popup" :active="true && active" :height="'auto'">
@@ -56,7 +39,9 @@
                 <div class="popup-record-popup-line2">
                     <div>
                         <select>
-                            <option>啊啊啊</option>
+                            <template v-for="account in accounts">
+                                <option :key="account.id">{{ account.name }}</option>
+                            </template>
                         </select>
                     </div>
                     <div>
@@ -80,19 +65,62 @@
         components: {
             Popup
         },
-        props: {
-            active: Boolean
-        },
         data: function() {
             return {
-                amount: null
+                active: false,
+                activeTabName: "LOSS",
+                amount: null,
+                accounts: [],
+                activeAccount: null
             };
+        },
+        computed: {
         },
         watch: {
             amount: function(newValue, oldValue) {
                 if(!/^[0-9]{0,8}(\.[0-9]{0,2})?$/.test(newValue)) {
                     this.amount = oldValue;
                 }
+            }
+        },
+        created: function() {
+            this.axios
+                .get("account/list")
+                .then(result => {
+                    if(!result.success) {
+                        alert(result.msg);
+                        return;
+                    }
+                    this.accounts = result.data;
+                    this.initActiveAccount();
+                });
+        },
+        methods: {
+            show: function() {
+                this.active = true;
+            },
+            hide: function() {
+                this.active = false;
+            },
+            tab: function(tabName) {
+                this.activeTabName = tabName;
+                this.initActiveAccount();
+            },
+            initActiveAccount: function() {
+                console.log();
+                console.log(this.activeTabName);
+                for(let account of this.accounts) {
+                    console.log(account.title.kind);
+                    if(account.title.kind == this.activeTabName) {
+                        this.activeAccount = account;
+                        console.log("ok");
+                        return;
+                    }
+                }
+                this.activeAccount = null;
+            },
+            changeAccount: function(account) {
+                this.activeAccount = account;
             }
         }
     }
@@ -125,9 +153,12 @@
 .popup-record-tab>* {
     color: gray;
     text-decoration: none;
+    box-shadow: none;
+    outline: none;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
 }
 .popup-record-tab>*.active {
-    border-radius: 0;
     border-bottom: 2px solid #ee3f3e;
 }
 

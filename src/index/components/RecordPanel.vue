@@ -1,6 +1,6 @@
 <template>
     <Panel id="panel-record">
-        <b-button variant="outline-danger" id="panel-record-add">记一笔</b-button>
+        <b-button @click="showRecordPopup" variant="outline-danger" id="panel-record-add">记一笔</b-button>
         <!-- 丁字面板 -->
         <div id="panel-record-t" ref="panelRecordT" class="slider">
             <!-- 丁字面板滚动 -->
@@ -30,7 +30,7 @@
         </div><!-- 丁字面板 -->
         <div id="panel-record-bg"></div>
         <!-- 记一笔弹出层 -->
-        <RecordPopup :active="true"></RecordPopup><!-- 记一笔弹出层 -->
+        <RecordPopup ref="recordPopup"></RecordPopup><!-- 记一笔弹出层 -->
     </Panel>
 </template>
 
@@ -59,10 +59,14 @@
                 recordsByDay: [],
                 lastLoadDate: null,
                 isLoading: false,
-                emptyDayCount: 0
+                emptyDayCount: 0,
+                recordPopupShow: false
             };
         },
         methods: {
+            showRecordPopup: function() {
+                this.$refs.recordPopup.show();
+            },
             loadIfNeed: function() {
                 let scrollTop = this.$refs.panelRecordT.scrollTop; // 顶部距离
                 let scrollHeight = this.$refs.panelRecordT.scrollHeight; // 内容高度
