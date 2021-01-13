@@ -5,15 +5,18 @@
             <div>日常账本</div>
         </header>
         <div class="popup-content">
+            <!-- tab选择 -->
             <div class="popup-record-tab">
                 <b-button class="active" variant="link">支出</b-button>
                 <b-button variant="link">收入</b-button>
                 <b-button variant="link">转账</b-button>
-            </div>
+            </div><!-- tab选择 -->
+            <!-- 金额输入 -->
             <div class="popup-record-amount">
                 <div>工资</div>
                 <input v-model="amount" type="text" placeholder="0.00" />
-            </div>
+            </div><!-- 金额输入 -->
+            <!-- 科目选择 -->
             <div class="popup-record-title">
                 <div class="active">
                     <div><b-icon icon="cash"></b-icon></div>
@@ -39,7 +42,8 @@
                     <div><b-icon icon="cash"></b-icon></div>
                     <div>工资</div>
                 </div>
-            </div>
+            </div><!-- 科目选择 -->
+            <!-- 底部弹出框 -->
             <Popup class="popup-record-popup" :active="true && active" :height="'auto'">
                 <div class="popup-record-popup-line1">
                     <div class="popup-record-time"><b-icon icon="calendar3"></b-icon> 01.06</div>
@@ -49,7 +53,21 @@
                         <b-button>OK</b-button>
                     </div>
                 </div>
-            </Popup>
+                <div class="popup-record-popup-line2">
+                    <div>
+                        <select>
+                            <option>啊啊啊</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select>
+                            <option>啊啊啊</option>
+                        </select>
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </Popup><!-- 底部弹出框 -->
         </div>
     </Popup>
 </template>
@@ -195,5 +213,20 @@
     line-height: 24px;
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.popup-record-popup-line2 {
+    display: flex;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+}
+.popup-record-popup-line2>* {
+    width: 25%;
+}
+.popup-record-popup-line2>*>select {
+    width: 100%;
+    border-style: none;
+    padding: 0 5px;
 }
 </style>
