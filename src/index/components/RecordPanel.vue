@@ -30,7 +30,7 @@
         </div><!-- 丁字面板 -->
         <div id="panel-record-bg"></div>
         <!-- 记一笔弹出层 -->
-        <RecordPopup ref="recordPopup"></RecordPopup><!-- 记一笔弹出层 -->
+        <RecordPopup ref="recordPopup" @recordChange="reload"></RecordPopup><!-- 记一笔弹出层 -->
     </Panel>
 </template>
 
@@ -66,6 +66,15 @@
         methods: {
             showRecordPopup: function() {
                 this.$refs.recordPopup.show();
+            },
+            reload: function() {
+                console.log("reload");
+                this.recordsByDay = [];
+                this.lastLoadDate = null;
+                this.emptyDayCount = 0;
+                setTimeout(() => {
+                    this.loadIfNeed();
+                }, 100);
             },
             loadIfNeed: function() {
                 let scrollTop = this.$refs.panelRecordT.scrollTop; // 顶部距离
@@ -158,6 +167,8 @@
         background-color: #f2f2f2;
         color: #ee504f;
         border-color: #ee504f;
+        box-shadow: none;
+        outline: none;
     }
     #panel-record-t {
         flex-grow: 1;

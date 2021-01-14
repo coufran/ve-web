@@ -29,24 +29,26 @@
             <!-- 底部弹出框 -->
             <Popup class="popup-record-popup" :active="true && active" :height="'auto'">
                 <div class="popup-record-popup-line1">
-                    <div class="popup-record-time"><b-icon icon="calendar3"></b-icon> 01.06</div>
+                    <div class="popup-record-time"><b-icon icon="calendar3"></b-icon> <input v-model="time" type="text" style="max-width: 50px" /></div>
                     <div class="popup-record-remark">
                         <b-icon icon="pencil-square"></b-icon>
-                        <input type="text" placeholder="写点啥备注下"/>
-                        <b-button>OK</b-button>
+                        <input v-model="remark" type="text" placeholder="写点啥备注下"/>
+                        <b-button @click="add">OK</b-button>
                     </div>
                 </div>
                 <div class="popup-record-popup-line2">
                     <div>
-                        <select>
+                        <select v-model="realAccountId1">
                             <template v-for="account in accounts">
-                                <option :key="account.id">{{ account.name }}</option>
+                                <option v-if="isReal(account.title)" :key="account.id" :value="account.id">{{ account.name }}</option>
                             </template>
                         </select>
                     </div>
                     <div>
-                        <select>
-                            <option>啊啊啊</option>
+                        <select v-model="realAccountId2" v-if="activeTabName=='TRANSFER'">
+                            <template v-for="account in accounts">
+                                <option v-if="isReal(account.title)" :key="account.id" :value="account.id">{{ account.name }}</option>
+                            </template>
                         </select>
                     </div>
                     <div></div>
@@ -71,7 +73,11 @@
                 activeTabName: "LOSS",
                 amount: null,
                 accounts: [],
-                activeAccount: null
+                activeAccount: null,
+                realAccountId1: null,
+                realAccountId2: null,
+                time: this.moment().format("MM.DD"),
+                remark: null
             };
         },
         computed: {
@@ -102,18 +108,25 @@
             hide: function() {
                 this.active = false;
             },
+            clear: function() {
+                this.amount = null;
+                this.remark = null;
+            },
             tab: function(tabName) {
                 this.activeTabName = tabName;
                 this.initActiveAccount();
             },
             initActiveAccount: function() {
-                console.log();
-                console.log(this.activeTabName);
                 for(let account of this.accounts) {
-                    console.log(account.title.kind);
+                    if(this.isReal(account.title)) {
+                        this.realAccountId1 = this.realAccountId1 || account.id;
+                        this.realAccountId2 = this.realAccountId2 || account.id;
+                        break;
+                    }
+                }
+                for(let account of this.accounts) {
                     if(account.title.kind == this.activeTabName) {
                         this.activeAccount = account;
-                        console.log("ok");
                         return;
                     }
                 }
@@ -121,6 +134,41 @@
             },
             changeAccount: function(account) {
                 this.activeAccount = account;
+            },
+            isReal: function(title) {
+                return title.kind == "ASSETS" || title.kind == "LIABILITY";
+            },
+            add: function() {
+                let debitId; // 借方
+                let creditId;// 贷方
+                if(this.activeTabName == 'LOSS') { // 支出
+                    debitId = this.activeAccount.id;
+                    creditId = this.realAccountId1;
+                } else if(this.activeTabName == 'PROFIT') { // 收入
+                    debitId = this.realAccountId1;
+                    creditId = this.activeAccount.id;
+                } else {
+                    debitId = this.realAccountId2;
+                    creditId = this.realAccountId1;
+                }
+                this.axios
+                        .post("record/add", {
+                            amount: this.numeral(this.amount).multiply(100).value(), // 金额
+                            debitId: debitId, // 借方
+                            creditId: creditId, // 贷方
+                            // groupId: xxx, // 联合ID
+                            time: this.moment(this.time, "MM.DD").format("YYYY-MM-DD HH:mm:ss"), // 时间
+                            remark: this.remark // 备注
+                        })
+                        .then(result => {
+                            if(!result.success) {
+                                alert(result.msg);
+                                return;
+                            }
+                            this.$emit("recordChange");
+                            this.clear();
+                            this.hide();
+                        });
             }
         }
     }
