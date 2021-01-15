@@ -1,4 +1,5 @@
 module.exports = {
+    publicPath: "./",
     // 多页面配置
     pages: {
         index: {
