@@ -26,6 +26,9 @@ Vue.prototype.axios.interceptors.request.use(function (config) {
 });
 // 解析响应数据
 Vue.prototype.axios.interceptors.response.use(function(response) {
+    if(response.data && !response.data.success && response.data.code=="401") {
+        window.location.href = "login.html";
+    }
     return response.data;
 }, function(error) {
     if(error.response) {

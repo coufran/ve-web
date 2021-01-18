@@ -11,11 +11,11 @@
                 <!-- 资产汇总 -->
                 <header class="account-summary">
                     <div class="account-summary-main">
-                        <span>{{ numeral((assetsAmount-liabilityAmount)/100).format("0.00") }}</span>
+                        <span>{{ numeral((assetsAmount+liabilityAmount)/100).format("0.00") }}</span>
                         <span class="account-summary-font-small">净资产</span>
                     </div>
                     <div class="account-summary-assist">
-                        <div><span class="account-summary-font-small">负债</span> <span>{{ numeral(liabilityAmount/100).format("0.00") }}</span></div>
+                        <div><span class="account-summary-font-small">负债</span> <span>{{ numeral(0-liabilityAmount/100).format("0.00") }}</span></div>
                         <div><span class="account-summary-font-small">资产</span> <span>{{ numeral(assetsAmount/100).format("0.00") }}</span></div>
                     </div>
                 </header><!-- 资产汇总 -->

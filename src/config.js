@@ -8,7 +8,7 @@ const config = {
     // 生产环境配置
     production: {
         server: {
-            url: "http://www.coufran.cn/ve"
+            url: "https://www.coufran.cn/ve"
         }
     }
 }

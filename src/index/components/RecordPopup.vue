@@ -264,6 +264,13 @@
     border-top: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
 }
+.popup-record-popup-line1>*:first-child>input {
+    max-width: 50px;
+    border-style: none;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: transparent;
+}
 .popup-record-popup-line1>*:nth-child(n+2) {
     margin-left: 10px;
 }
