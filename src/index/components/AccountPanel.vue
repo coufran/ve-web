@@ -3,7 +3,7 @@
         <header id="panel-account-header">
             <span>我的资产</span>
             <div id="panel-account-header-btns">
-                <div>+</div>
+<!--                <div>+</div>-->
             </div>
         </header>
         <div id="panel-account-main" class="slider">

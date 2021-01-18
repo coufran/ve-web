@@ -7,7 +7,7 @@
             <div class="slider-body">
                 <template v-for="recordsByDayItem in recordsByDay">
                     <div class="panel-record-t-title" :key="recordsByDayItem.date.format()">
-                        <div class="panel-record-t-left">{{recordsByDayItem.date.format("D日")}}</div>
+                        <div class="panel-record-t-left">{{formatDate(recordsByDayItem.date)}}</div>
                         <div class="panel-record-t-middle"><span></span></div>
                         <div class="panel-record-t-right">{{numeral(recordsByDayItem.sum/100).format("0.00")}}</div>
                     </div>
@@ -135,6 +135,20 @@
                     }
                 }
                 return sum;
+            },
+            formatDate: function(date) {
+                let thisMonth = this.moment().add(1, "months").date(1);
+                // 当月内，只显示日
+                if(thisMonth.diff(date, "months") < 1) {
+                    return date.format("D日");
+                }
+                let thisYear = this.moment().add(1, "years").month(1).date(1);
+                // 当年内，显示月日
+                if(thisYear.diff(date, "years") < 1) {
+                    return date.format("M月D日");
+                }
+                // 其他，显示年月日
+                return date.format("YYYY年M月D日");
             }
         }
     }

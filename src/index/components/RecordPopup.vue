@@ -139,6 +139,7 @@
                 return title.kind == "ASSETS" || title.kind == "LIABILITY";
             },
             add: function() {
+                // 设置借方贷方
                 let debitId; // 借方
                 let creditId;// 贷方
                 if(this.activeTabName == 'LOSS') { // 支出
@@ -151,6 +152,7 @@
                     debitId = this.realAccountId2;
                     creditId = this.realAccountId1;
                 }
+                // 请求
                 this.axios
                         .post("record/add", {
                             amount: this.numeral(this.amount).multiply(100).value(), // 金额
