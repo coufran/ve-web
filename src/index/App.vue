@@ -41,21 +41,6 @@ export default {
             activePanel: "record" // 活跃面板，record（记账），account（账户），mine（我的）
         };
     },
-    // 校验是否登录，未登录或登录已过期重定向到登录页
-    created: function() {
-        this.axios
-            .get("/auth/isLogin")
-            .then(function(response) {
-                if(!response.success) {
-                    alert(response.msg);
-                    return;
-                }
-                let isLogin = response.data;
-                if(!isLogin) {
-                    window.location.href = "login.html";
-                }
-            });
-    },
     methods: {
         /**
          * 切换面板

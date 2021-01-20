@@ -10,15 +10,59 @@ import config from './config'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+// 添加各种工具
+Vue.prototype.dataStore = dataStore;
+Vue.prototype.numeral = numeral;
+Vue.prototype.moment = moment;
+
 // 定义axios组件
 Vue.prototype.axios = Axios.create({
     baseURL: config.server.url + "/web",
     timeout: 10000
 });
+
 // 添加鉴权请求头
-Vue.prototype.axios.interceptors.request.use(function (config) {
+let token; // 全局token存储
+const getToken = async () => {
+    token = token || JSON.parse(localStorage.getItem("token"));
+    // accessToken未过期
+    if (token.accessExpire >= moment().valueOf()) {
+        return token.accessToken;
+    }
+    // accessToken和refreshToken都过期了
+    if (token.refreshExpire < moment().valueOf()) {
+        window.location.href = "login.html";
+        return null;
+    }
+    // accessToken过期，但是refresh没过期
+    // 交换
+    let response = await Vue.prototype.axios
+        .request({
+            url: "/auth/refresh",
+            public: true,
+            method: "POST",
+            params: {
+                refreshToken: token.refreshToken
+            }
+        });
+    if (!response.success) { // 交换失败
+        window.location.href = "login.html";
+        return;
+    }
+    token = response.data;
+    localStorage.setItem("token", JSON.stringify(token));
+
+    return token.accessToken;
+};
+Vue.prototype.axios.interceptors.request.use(async config => {
+    // 开放接口，不需要Token Header
+    if(config.public) {
+        return config;
+    }
+    // 否则，添加Token Header
+    let token = await getToken();
     config.headers = {
-        'Token': sessionStorage.getItem("token")
+        'Token': token
     };
     return config;
 }, function (error) {
@@ -42,11 +86,6 @@ Vue.prototype.axios.interceptors.response.use(function(response) {
     }
     return Promise.reject(error);
 })
-
-// 添加各种工具
-Vue.prototype.dataStore = dataStore;
-Vue.prototype.numeral = numeral;
-Vue.prototype.moment = moment;
 
 // Vue配置
 Vue.config.productionTip = false

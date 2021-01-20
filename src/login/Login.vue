@@ -38,6 +38,8 @@
                     .post("/auth/login", {
                         username: this.username,
                         password: this.password
+                    }, {
+                        public: true
                     })
                     .then(response => {
                         // 登录失败，显示错误消息
@@ -47,7 +49,7 @@
                         }
                         // 登陆成功，保存Token，重定向到首页
                         let token = response.data;
-                        window.sessionStorage.setItem("token", token);
+                        window.localStorage.setItem("token", JSON.stringify(token));
                         window.location.href = "index.html";
                     });
             }
