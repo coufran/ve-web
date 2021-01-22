@@ -4,6 +4,8 @@ import Axios from 'axios'
 import numeral from 'numeral'
 import moment from 'moment'
 
+import util from './util'
+
 import dataStore from './data-store'
 import config from './config'
 
@@ -23,8 +25,14 @@ Vue.prototype.axios = Axios.create({
 
 // 添加鉴权请求头
 let token; // 全局token存储
+let refreshing = false;
 const getToken = async () => {
+    console.debug("before");
+    console.debug(token);
     token = token || JSON.parse(localStorage.getItem("token"));
+    if(!token) {
+        window.location.href = "login.html";
+    }
     // accessToken未过期
     if (token.accessExpire >= moment().valueOf()) {
         return token.accessToken;
@@ -36,6 +44,15 @@ const getToken = async () => {
     }
     // accessToken过期，但是refresh没过期
     // 交换
+    while(refreshing) {
+        await util.sleep(10);
+        console.debug("await");
+        console.debug(token);
+        if(token.accessExpire >= moment().valueOf()) { // accessToken有效，返回
+            return token.accessToken;
+        }
+    }
+    refreshing = true; // 设置状态正在刷新
     let response = await Vue.prototype.axios
         .request({
             url: "/auth/refresh",
@@ -51,10 +68,14 @@ const getToken = async () => {
     }
     token = response.data;
     localStorage.setItem("token", JSON.stringify(token));
+    console.debug("refresh");
+    console.debug(token);
+    refreshing = false; // 设置状态完成刷新
 
     return token.accessToken;
 };
 Vue.prototype.axios.interceptors.request.use(async config => {
+    console.debug(config.url);
     // 开放接口，不需要Token Header
     if(config.public) {
         return config;
