@@ -2,7 +2,7 @@
     <div id="app">
         <!-- 面板 -->
         <div id="content">
-          <RecordPanel v-if="activePanel == 'record'"></RecordPanel>
+          <PanelRecord v-if="activePanel == 'record'"></PanelRecord>
           <AccountPanel v-if="activePanel == 'account'"></AccountPanel>
           <MinePanel v-if="activePanel == 'mine'"></MinePanel>
         </div><!-- 面板 -->
@@ -25,14 +25,14 @@
 </template>
 
 <script>
-import RecordPanel from "./components/RecordPanel.vue"
+import PanelRecord from "./components/PanelRecord.vue"
 import AccountPanel from "./components/AccountPanel.vue"
 import MinePanel from "./components/MinePanel.vue"
 
 export default {
     name: 'App',
     components: {
-        RecordPanel,
+        PanelRecord,
         AccountPanel,
         MinePanel
     },
