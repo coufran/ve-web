@@ -32,6 +32,7 @@ const getToken = async () => {
     token = token || JSON.parse(localStorage.getItem("token"));
     if(!token) {
         window.location.href = "login.html";
+        return null;
     }
     // accessToken未过期
     if (token.accessExpire >= moment().valueOf()) {
