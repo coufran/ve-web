@@ -6,14 +6,12 @@ import moment from 'moment'
 
 import util from './util'
 
-import dataStore from './data-store'
 import config from './config'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // 添加各种工具
-Vue.prototype.dataStore = dataStore;
 Vue.prototype.numeral = numeral;
 Vue.prototype.moment = moment;
 

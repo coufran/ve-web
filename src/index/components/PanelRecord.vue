@@ -29,24 +29,23 @@ export default {
         Panel,
         RecordPopup
     },
-    // created: function() {
-    //     this.load();
-    // },
     mounted: function() {
         this.loadIfNeed();
-        this.$refs.panelRecordT.addEventListener("scroll", () => {
-            this.emptyDayCount = 0;
-            this.loadIfNeed();
-        });
+        // this.$refs.panelRecordT.addEventListener("scroll", () => {
+        //     this.emptyDayCount = 0;
+            // this.loadIfNeed();
+        // });
     },
     data: function() {
         return {
-            recordsByDay: [],
-            lastLoadDate: null,
-            isLoading: false,
             emptyDayCount: 0,
             recordPopupShow: false
         };
+    },
+    computed: {
+        recordsByDay() {
+            return this.$store.getters.recordsGroupByDay;
+        }
     },
     methods: {
         showRecordPopup: function() {
@@ -70,56 +69,8 @@ export default {
             }
         },
         load: function(successCallback) {
-            if(this.isLoading) {
-                return;
-            }
-            this.isLoading = true;
-            let date;
-            if(this.lastLoadDate == null) {
-                date = this.moment();
-            } else {
-                date = this.moment(this.lastLoadDate).subtract(1, "days");
-            }
-            this.axios
-                    .get("/record/list", {
-                        params: {
-                            startTime: date.format("YYYY/MM/DD"),
-                            endTime: date.format("YYYY/MM/DD")
-                        }
-                    })
-                    .then(result => {
-                        if(!result.success) {
-                            alert(result.msg);
-                            return;
-                        }
-                        if(result.data.length > 0) {
-                            this.recordsByDay.push({
-                                date: date,
-                                records: result.data,
-                                sum: this.sumAmount(result.data)
-                            });
-                            this.emptyDayCount = 0;
-                        } else {
-                            this.emptyDayCount++;
-                        }
-                        this.lastLoadDate = date;
-                        this.isLoading = false;
-                        if(successCallback && this.emptyDayCount <= 30) {
-                            successCallback();
-                        }
-                    });
-        },
-        sumAmount: function(records) {
-            let sum = 0;
-            for(let i=0; i<records.length; i++) {
-                let record = records[i];
-                if(record.income) {
-                    sum += record.amount;
-                } else if(record.expend) {
-                    sum -= record.amount;
-                }
-            }
-            return sum;
+            console.log(successCallback);
+            this.$store.dispatch("loadRecord");
         }
     }
 }

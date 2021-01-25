@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div class="panel-record-t-title" :key="recordsByDayItem.date.format()">
+        <div class="panel-record-t-title">
             <div class="panel-record-t-left">{{formatDate(recordsByDayItem.date)}}</div>
             <div class="panel-record-t-middle"><span></span></div>
-            <div class="panel-record-t-right">{{numeral(recordsByDayItem.sum/100).format("0.00")}}</div>
+            <div class="panel-record-t-right">{{numeral(recordsByDayItem.sumAmount/100).format("0.00")}}</div>
         </div>
         <!-- 收支记录 -->
         <PanelRecordTDayItem v-for="record in recordsByDayItem.records"
