@@ -53,12 +53,12 @@ const store = new Vuex.Store({
             if(context.state.lastLoadDate == null) {
                 date = moment();
             } else {
-                date = this.moment(context.state.lastLoadDate).subtract(1, "days");
+                date = moment(context.state.lastLoadDate).subtract(1, "days");
             }
             Vue.prototype.axios
                 .get("/record/list", {
                     params: {
-                        startTime: date.format("YYYY/MM/DD"),
+                        startTime: moment(date).subtract(60, "days").format("YYYY/MM/DD"),
                         endTime: date.format("YYYY/MM/DD")
                     }
                 })
@@ -67,13 +67,8 @@ const store = new Vuex.Store({
                         alert(result.msg);
                         return;
                     }
-                    if(result.data.length > 0) {
-                        this.$store.commit("addRecord", result.data);
-                        this.emptyDayCount = 0;
-                    } else {
-                        this.emptyDayCount++;
-                    }
-                    context.state.lastLoadDate = date;
+                    context.commit("addRecord", result.data);
+                    context.state.lastLoadDate = moment(date).subtract(60, "days");
                     context.state.isLoading = false;
                     // if(successCallback && this.emptyDayCount <= 30) {
                     //     successCallback();

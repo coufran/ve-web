@@ -31,14 +31,12 @@ export default {
     },
     mounted: function() {
         this.loadIfNeed();
-        // this.$refs.panelRecordT.addEventListener("scroll", () => {
-        //     this.emptyDayCount = 0;
-            // this.loadIfNeed();
-        // });
+        this.$refs.panelRecordT.addEventListener("scroll", () => {
+            this.loadIfNeed();
+        });
     },
     data: function() {
         return {
-            emptyDayCount: 0,
             recordPopupShow: false
         };
     },
