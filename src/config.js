@@ -13,7 +13,7 @@ const config = {
     // 生产环境配置
     production: {
         server: {
-            url: "https://www.coufran.cn/ve"
+            url: "."
         },
         version: publicConfig.version
     }
